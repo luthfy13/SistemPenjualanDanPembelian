@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-08-20T15:43:54 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FakturTunai" pageWidth="609" pageHeight="396" columnWidth="549" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="40" uuid="a41354f2-888c-41fe-9c1e-dbd4609efe9b">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="db_penjualan_adapter.xml"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="cm"/>
+	<parameter name="NoFaktur" class="java.lang.String"/>
+	<parameter name="AdminSistem" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+$P{AdminSistem} as admin_sistem,
+tb_transaksi_kredit.no_faktur,
+tb_transaksi_kredit.id_pelanggan,
+tb_transaksi_kredit.total_bayar,
+tb_transaksi_kredit.tanggal,
+tb_transaksi_kredit.tanggal_jatuh_tempo,
+tb_transaksi_kredit.id_karyawan,
+tb_transaksi_kredit.nama_supir,
+tb_transaksi_kredit.jns_transaksi,
+tb_detail_transaksi_kredit.id_barang,
+tb_detail_transaksi_kredit.harga_jual,
+tb_detail_transaksi_kredit.satuan,
+tb_detail_transaksi_kredit.qty,
+tb_detail_transaksi_kredit.diskon,
+(tb_detail_transaksi_kredit.qty*(tb_detail_transaksi_kredit.harga_jual - (tb_detail_transaksi_kredit.harga_jual*(tb_detail_transaksi_kredit.diskon/100)))) as FinalSubTotal,
+tb_detail_transaksi_kredit.harga_jual*(tb_detail_transaksi_kredit.diskon/100) as diskon_harga,
+tb_barang.nama as nama_barang,
+tb_pelanggan.nama as nama_pelanggan,
+tb_pelanggan.nama_toko,
+tb_karyawan.nama as nama_karyawan,
+tb_properties.nama_toko as toko,
+tb_properties.alamat,
+tb_properties.telp
+FROM
+tb_properties,
+tb_transaksi_kredit
+INNER JOIN tb_detail_transaksi_kredit ON tb_transaksi_kredit.no_faktur = tb_detail_transaksi_kredit.no_faktur
+INNER JOIN tb_barang ON tb_detail_transaksi_kredit.id_barang = tb_barang.id
+INNER JOIN tb_pelanggan ON tb_transaksi_kredit.id_pelanggan = tb_pelanggan.id
+INNER JOIN tb_karyawan ON tb_transaksi_kredit.id_karyawan = tb_karyawan.id
+WHERE
+tb_transaksi_kredit.no_faktur = $P{NoFaktur}]]>
+	</queryString>
+	<field name="admin_sistem" class="java.lang.String"/>
+	<field name="no_faktur" class="java.lang.String"/>
+	<field name="id_pelanggan" class="java.lang.String"/>
+	<field name="total_bayar" class="java.lang.Integer"/>
+	<field name="tanggal" class="java.sql.Date"/>
+	<field name="tanggal_jatuh_tempo" class="java.sql.Date"/>
+	<field name="id_karyawan" class="java.lang.String"/>
+	<field name="nama_supir" class="java.lang.String"/>
+	<field name="jns_transaksi" class="java.lang.String"/>
+	<field name="id_barang" class="java.lang.String"/>
+	<field name="harga_jual" class="java.lang.Integer"/>
+	<field name="satuan" class="java.lang.String"/>
+	<field name="qty" class="java.lang.Integer"/>
+	<field name="diskon" class="java.lang.Float"/>
+	<field name="FinalSubTotal" class="java.lang.Integer"/>
+	<field name="diskon_harga" class="java.lang.Integer"/>
+	<field name="nama_barang" class="java.lang.String"/>
+	<field name="nama_pelanggan" class="java.lang.String"/>
+	<field name="nama_toko" class="java.lang.String"/>
+	<field name="nama_karyawan" class="java.lang.String"/>
+	<field name="toko" class="java.lang.String"/>
+	<field name="alamat" class="java.lang.String"/>
+	<field name="telp" class="java.lang.String"/>
+	<variable name="SubTotal" class="java.lang.Integer" resetType="None">
+		<variableExpression><![CDATA[$F{qty}*$F{harga_jual}]]></variableExpression>
+	</variable>
+	<variable name="SubTotalDiskon" class="java.lang.Integer">
+		<variableExpression><![CDATA[$F{qty}* (RIGHT($F{diskon_harga}.toString(),1).equals("9") ? $F{diskon_harga} + 1 : $F{diskon_harga})]]></variableExpression>
+	</variable>
+	<variable name="TotalDiskon" class="java.lang.Integer" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$V{SubTotalDiskon}]]></variableExpression>
+	</variable>
+	<variable name="Total" class="java.lang.Integer" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$V{SubTotal}]]></variableExpression>
+	</variable>
+	<group name="Group1" isReprintHeaderOnEachPage="true">
+		<groupHeader>
+			<band height="15">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<staticText>
+					<reportElement x="0" y="0" width="30" height="15" uuid="2956c316-ea75-4fb4-be5f-735238b45eb5">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Courier New" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Qty]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="30" y="0" width="30" height="15" uuid="86c99e83-fd79-4d0a-9de9-c698c00e211c">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Courier New" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Stn]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="60" y="0" width="190" height="15" uuid="1b024ba6-1351-4d77-8fbf-1573f6b1638c"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Courier New" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nama Barang]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="250" y="0" width="80" height="15" uuid="5a52dace-8e5a-4fd7-a398-0bc67e3789c0"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Courier New" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Harga Satuan]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="330" y="0" width="40" height="15" uuid="60af9872-c8ef-4ef4-9215-6a4347b0c940"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Courier New" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Diskon]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="370" y="0" width="80" height="15" uuid="b4b5d722-684d-40c4-bae1-b754b89d2a12">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Courier New" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Diskon Harga]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="450" y="0" width="86" height="15" uuid="c75e5932-0a8f-479b-9337-08315cca45ae">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Courier New" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sub Total]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40">
+			<textField>
+				<reportElement x="0" y="0" width="280" height="40" uuid="21e52613-3f00-4ebf-a991-750cc130a185"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Courier New" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{toko} + "\n" +
+"Alamat : " + $F{alamat} + "\n" +
+"Telp   : " + $F{telp}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="85" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField>
+				<reportElement x="0" y="55" width="280" height="15" uuid="fd3b7f77-d713-4df5-9da1-063188d22ef7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nama Pelanggan : " + $F{nama_pelanggan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="40" width="280" height="15" uuid="7160a5a5-1361-49a1-96e0-734b9e11ad8b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ID Pelanggan   : " + $F{id_pelanggan}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="25" width="280" height="15" uuid="ed244e06-9c7f-447e-9855-3eceba36e8c7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No. Faktur     : " + $F{no_faktur}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="310" y="70" width="239" height="15" uuid="0ff73d93-51da-4fc0-b103-71fa9e0cd392"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Transaksi     : Kredit " + $F{jns_transaksi}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="310" y="55" width="239" height="15" uuid="04ae48ed-8cd8-4eef-9352-da211b167fa3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nama Sales    : " + $F{nama_karyawan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="310" y="25" width="239" height="15" uuid="6ad1fa2b-2866-4d80-b476-7b981ac231e1"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tgl Transaksi : " + DATEFORMAT($F{tanggal},"dd MMM yyyy")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="70" width="280" height="15" uuid="0cb3393d-9d27-40eb-8712-6ad3698651b0">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nama Toko      : " + $F{nama_toko}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="549" height="25" uuid="e609e4b5-8596-4dd1-9305-6d3066520ec0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FAKTUR]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="370" y="0" width="100" height="30" uuid="67132b74-76f7-4816-bf16-e7b879d5904d"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Halaman " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="470" y="0" width="100" height="30" uuid="2db7e8fa-87a0-4410-9001-b6d55b2c60e0"/>
+				<textElement textAlignment="Left">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" dari " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="310" y="40" width="239" height="15" uuid="f6701d0a-24f6-4323-b640-28feb7b3934e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tgl Jth Tempo : " + DATEFORMAT($F{tanggal_jatuh_tempo},"dd MMM yyyy")]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField>
+				<reportElement x="30" y="0" width="30" height="15" uuid="0ca184d2-43bc-443e-91a7-a8a4c7b3d685">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{satuan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="60" y="0" width="190" height="15" uuid="d795b0a1-8537-4f9c-9421-8b2da6309747"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nama_barang}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement x="270" y="0" width="60" height="15" uuid="14154131-7b17-470a-9795-6f7b607d3ead"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+					<paragraph leftIndent="0" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{harga_jual}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement x="470" y="0" width="66" height="15" uuid="b27e985c-92fe-47cd-bc3d-8f5671066ff7"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+					<paragraph leftIndent="0" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SubTotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="30" height="15" uuid="8533ee67-fa75-4981-bf02-c79097ab87e8">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qty}]]></textFieldExpression>
+			</textField>
+			<textField pattern="Rp #,##0;Rp -#,##0">
+				<reportElement x="370" y="0" width="80" height="15" uuid="5bfc82e7-3779-490e-9b06-731ccb16c17f"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+					<paragraph leftIndent="0" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(RIGHT($F{diskon_harga}.toString(),1).equals("9") ? $F{diskon_harga} + 1 : $F{diskon_harga}) * $F{qty}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="360" y="0" width="10" height="15" uuid="1f25e602-3e85-46f7-ada2-eb9365c8cf83"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="330" y="0" width="30" height="15" uuid="2ceef420-6c8d-4013-9706-d7129b3cd5b7"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+					<paragraph leftIndent="0" rightIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{diskon}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="250" y="0" width="20" height="15" uuid="640811c3-2db6-422a-9a56-7d8740822576"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Rp]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="0" width="20" height="15" uuid="b5f75568-2574-4cef-9010-0720d4e9cc06"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Rp]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="50">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField>
+				<reportElement x="20" y="0" width="160" height="50" uuid="a3e97ee1-97ad-4428-b3db-472131437c03"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Courier New" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Penerima,\n\n\n" + $P{AdminSistem}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="0" width="160" height="50" uuid="c22a0284-b203-4fe2-aaec-b3df01e3b97a"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Courier New" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Mengetahui,\n\n\n" + $F{nama_pelanggan}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band height="45" splitType="Stretch">
+			<textField pattern="#,##0;-#,##0">
+				<reportElement x="450" y="0" width="86" height="15" uuid="a3483af0-6080-48e7-b50f-2d007c8163d1"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10" isBold="true"/>
+					<paragraph leftIndent="0" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="360" y="0" width="90" height="15" uuid="06938400-d0c5-4361-bc22-c4732abeaf6a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="30" width="90" height="15" uuid="135fb06f-5056-4f18-bbb8-589863562870">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[GRAND TOTAL]]></text>
+			</staticText>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement x="450" y="15" width="86" height="15" uuid="2a301746-9434-4eb6-91a0-1a39dfa6a80f"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10" isBold="true"/>
+					<paragraph leftIndent="0" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TotalDiskon}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="360" y="15" width="90" height="15" uuid="ac708f0b-7c3a-4d4b-a883-7751af86cb41">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DISKON]]></text>
+			</staticText>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement x="450" y="30" width="86" height="15" uuid="2aa8a7bd-feec-4f12-b9b3-087ea9faacae"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10" isBold="true"/>
+					<paragraph leftIndent="0" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_bayar}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="430" y="15" width="30" height="15" uuid="3c2dab34-431d-4cc0-a2d5-dad5b18e211d">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[: Rp]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="430" y="30" width="30" height="15" uuid="a4d71aa2-c881-46fb-8ea4-04f491bb9326">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[: Rp]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="430" y="0" width="30" height="15" uuid="fd36d26f-ef9f-4177-88cd-73ae7c93a36b">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[: Rp]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>
